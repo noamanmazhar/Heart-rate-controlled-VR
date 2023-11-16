@@ -18,7 +18,7 @@ public class manager : MonoBehaviour {
 
 	public GameObject sphere;
 
-	public string received_message;
+	string received_message;
 
 	void Start () {
 		deviceName = "ESP32-BT"; //bluetooth should be turned ON;
