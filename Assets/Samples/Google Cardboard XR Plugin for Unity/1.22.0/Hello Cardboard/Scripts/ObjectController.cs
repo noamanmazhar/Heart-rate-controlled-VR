@@ -42,6 +42,13 @@ public class ObjectController : MonoBehaviour
     private const float _minObjectHeight = 0.5f;
     private const float _maxObjectHeight = 3.5f;
 
+
+    private bool isGazedAt;
+    public float gazeTimer;
+    public float gazeDuration = 1.0f; // 5 seconds
+    public bool _selected = false;
+
+
     private Renderer _myRenderer;
     private Vector3 _startingPosition;
 
@@ -60,25 +67,22 @@ public class ObjectController : MonoBehaviour
     /// </summary>
     public void TeleportRandomly()
     {
-        // Picks a random sibling, activates it and deactivates itself.
-        int sibIdx = transform.GetSiblingIndex();
-        int numSibs = transform.parent.childCount;
-        sibIdx = (sibIdx + Random.Range(1, numSibs)) % numSibs;
-        GameObject randomSib = transform.parent.GetChild(sibIdx).gameObject;
 
-        // Computes new object's location.
-        float angle = Random.Range(-Mathf.PI, Mathf.PI);
-        float distance = Random.Range(_minObjectDistance, _maxObjectDistance);
-        float height = Random.Range(_minObjectHeight, _maxObjectHeight);
-        Vector3 newPos = new Vector3(Mathf.Cos(angle) * distance, height,
-                                     Mathf.Sin(angle) * distance);
+            int numSibs = transform.parent.childCount;
 
-        // Moves the parent to the new position (siblings relative distance from their parent is 0).
-        transform.parent.localPosition = newPos;
+            // Calculate the next sibling index
+            int nextSibIdx = (transform.GetSiblingIndex() + 1) % numSibs;
 
-        randomSib.SetActive(true);
-        gameObject.SetActive(false);
-        SetMaterial(false);
+            // Get the next sibling
+            GameObject nextSib = transform.parent.GetChild(nextSibIdx).gameObject;
+
+            // Moves the parent to the new position (siblings relative distance from their parent is 0).
+            // transform.parent.localPosition = nextSib.transform.localPosition;
+
+            nextSib.SetActive(true);
+            gameObject.SetActive(false);
+            SetMaterial(false);
+
     }
 
     /// <summary>
@@ -86,6 +90,7 @@ public class ObjectController : MonoBehaviour
     /// </summary>
     public void OnPointerEnter()
     {
+        isGazedAt = true;
         SetMaterial(true);
     }
 
@@ -94,7 +99,9 @@ public class ObjectController : MonoBehaviour
     /// </summary>
     public void OnPointerExit()
     {
+        isGazedAt = false;
         SetMaterial(false);
+        gazeTimer = 0f;
     }
 
     /// <summary>
@@ -106,13 +113,9 @@ public class ObjectController : MonoBehaviour
         TeleportRandomly();
     }
 
-    /// <summary>
-    /// Sets this instance's material according to gazedAt status.
-    /// </summary>
     ///
     /// <param name="gazedAt">
-    /// Value `true` if this object is being gazed at, `false` otherwise.
-    /// </param>
+
     private void SetMaterial(bool gazedAt)
     {
         if (InactiveMaterial != null && GazedAtMaterial != null)
@@ -120,4 +123,44 @@ public class ObjectController : MonoBehaviour
             _myRenderer.material = gazedAt ? GazedAtMaterial : InactiveMaterial;
         }
     }
+
+
+
+
+
+    private void Update()
+    {
+        // Check if the object is being gazed at
+        if (isGazedAt)
+        {
+            // Increment the gaze timer
+            gazeTimer += Time.deltaTime;
+
+            // Check if the gaze duration has been reached
+            if (gazeTimer >= gazeDuration)
+            {
+                // Perform actions when gazed at for 5 seconds
+                OnGazeDurationReached();
+            }
+        }
+        else
+        {
+
+            gazeTimer = 0f;
+        }
+
+        
+
+    }
+
+    void OnGazeDurationReached()
+    {
+
+        Debug.Log("Object gazed at for 5 seconds!");
+        // _selected = true;
+        TeleportRandomly();
+        gazeTimer = 0.0f;
+
+    }
+
 }

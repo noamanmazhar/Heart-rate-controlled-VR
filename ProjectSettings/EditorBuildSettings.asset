@@ -9,8 +9,11 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Game Scene.unity
     guid: 42f841bbfa500f54aa7e283052423546
   - enabled: 1
-    path: Assets/GAME.unity
+    path: Assets/Samples/GAME.unity
     guid: 752c1a9fb17ff4840bbf953126b7f759
+  - enabled: 0
+    path: Assets/Samples/Google Cardboard XR Plugin for Unity/1.22.0/Hello Cardboard/Scenes/HelloCardboard.unity
+    guid: 145a2a45d7bc746b19cb68410368bf96
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: bbb7aa5d6e7ca2d40a9bb74ad2cfea82, type: 2}
     xr.sdk.mock-hmd.settings: {fileID: 11400000, guid: 7facf77c45d85df4ca5038cee3ea37d8, type: 2}
